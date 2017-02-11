@@ -1,6 +1,6 @@
 module Radish
-  class Collection
-    def self.each(c, &bl)
+  module Collection
+    def each(c, &bl)
       if c.class == Array
         c.each_with_index do |v, i|
           bl.call(v, i, c)
@@ -14,7 +14,7 @@ module Radish
       c
     end
 
-    def self.map(c, &bl)
+    def map(c, &bl)
       if c.class == Array
         bl ? c.each_with_index.map { |v, i| bl.call(v, i, c) } : c
       elsif c.class == Hash
