@@ -38,6 +38,14 @@ describe Radish::Documents::Core do
     }
   end
 
+  def verify_get(expectations)
+    expectations.each do |ex|
+      expect(has(doc, ex[:path])).to be_truthy, "expected doc to have #{ex[:path]}"
+      ac = get(doc, ex[:path])
+      expect(ac).to eql(ex[:ex]), "expected #{ex[:ex]} for #{ex[:path]}, but got #{ac}"
+    end
+  end
+
   it 'should get paths by array' do
     expectations = [
       { path: ['a'], ex: doc['a'] },
@@ -49,12 +57,7 @@ describe Radish::Documents::Core do
       { path: ['e', 0, 'ea'], ex: doc['e'][0]['ea'] },
       { path: ['e', 1, 'eb', 'eba'], ex: doc['e'][1]['eb']['eba'] },
     ]
-
-    expectations.each do |ex|
-      expect(has(doc, ex[:path])).to be_truthy, "expected doc to have #{ex[:path]}"
-      ac = get(doc, ex[:path])
-      expect(ac).to eql(ex[:ex]), "expected #{ex[:ex]} for #{ex[:path]}, but got #{ac}"
-    end
+    verify_get(expectations)
   end
 
   it 'should get paths by string' do
@@ -68,12 +71,7 @@ describe Radish::Documents::Core do
       { path: 'e[0].ea', ex: doc['e'][0]['ea'] },
       { path: 'e[1].eb.eba', ex: doc['e'][1]['eb']['eba'] },
     ]
-
-    expectations.each do |ex|
-      expect(has(doc, ex[:path])).to be_truthy, "expected doc to have #{ex[:path]}"
-      ac = get(doc, ex[:path])
-      expect(ac).to eql(ex[:ex]), "expected #{ex[:ex]} for #{ex[:path]}, but got #{ac}"
-    end
+    verify_get(expectations)
   end
 
   it 'should yield default if path is non existant' do
