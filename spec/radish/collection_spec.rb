@@ -75,4 +75,47 @@ describe 'Radish::Collection' do
       expect(results).to eql(expected)
    end
  end
+
+ describe 'filter' do
+    it 'should return values if there is no iteree' do
+      arr = [1, 2, 3, 4];
+      o = { a: 1, b: 2, c: 3, d: 4 }
+
+      expect(filter(arr)).to eql(arr)
+      expect(filter(o)).to eql(o.values)
+      expect(filter(nil)).to eql([])
+   end
+
+   it 'should iterate an array yielding select by (k, i, c)' do
+      arr = [1, 2, 3, 4];
+
+      expected = arr.select { |v| v < 3 }
+      expected_args = arr.each_with_index.map { |v, i| { v: v, k: i, c: arr } }
+
+      args = []
+      results = filter(arr) do |v, k, c|
+        args << { v: v, k: k, c: c}
+        v < 3
+      end
+
+      expect(results).to eql(expected)
+      expect(args).to eql(expected_args)
+   end
+
+   it 'should iterate a hash yielding select by [k, v, c]' do
+      o = { a: 1, b: 2, c: 3, d: 4 }
+
+      expected = o.select { |k, v| v < 3}
+      expected_args = o.map { |k, v| { v: v, k: k, c: o} }
+
+      args = []
+      results = filter(o) do |v, k, c|
+        args << { v: v, k: k, c: c }
+        v < 3
+      end
+
+      expect(results).to eql(expected)
+      expect(args).to eql(expected_args)
+   end
+  end
 end
