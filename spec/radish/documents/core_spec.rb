@@ -1,5 +1,7 @@
 require_relative '../../../lib/radish/documents/core'
 
+require 'faker'
+
 describe Radish::Documents::Core do
   include Radish::Documents::Core
 
@@ -71,6 +73,23 @@ describe Radish::Documents::Core do
       expect(has(doc, ex[:path])).to be_truthy, "expected doc to have #{ex[:path]}"
       ac = get(doc, ex[:path])
       expect(ac).to eql(ex[:ex]), "expected #{ex[:ex]} for #{ex[:path]}, but got #{ac}"
+    end
+  end
+
+  it 'should yield default if path is non existant' do
+    expectations = [
+      ['z', 'z'],
+      'zz[0].zz',
+      '[0]',
+      'y.z.e',
+      [0, 0, 2],
+      ['q', 2, 'q'],
+    ]
+
+    expectations.each do |path|
+      expect(has(doc, path)).to be_falsey
+      ex = Faker::Hipster.word
+      expect(get(doc, path, ex)).to eql(ex)
     end
   end
 end
