@@ -20,7 +20,7 @@ module Radish
       end
 
       def set(doc, path, val)
-        build_from_path(doc, path, val)
+        build_from_path(doc, maybe_parse_path(path), val)
       end
 
       private
@@ -30,8 +30,13 @@ module Radish
           path
         elsif path.class == String
           path.split(/\./).inject([]) do |a, v|
-            m = /(.+)\[([0-9]+)\]/.match(v)
-            a.concat(m ? [m[1], m[2].to_i] : [v])
+            m = /([^\[]*)\[([0-9]+)\]/.match(v)
+            if m
+              i = m[2].to_i
+              a.concat(m[1].empty? ? [i] : [m[1], i])
+            else
+              a.concat([v])
+            end
           end
         else
           []
