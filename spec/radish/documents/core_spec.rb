@@ -83,12 +83,12 @@ describe Radish::Documents::Core do
       { path: ['a', 0], doc: { }, val: '1', ex: { 'a' => ['1'] } },
       { path: ['a', '0'], doc: {}, val: '1', ex: { 'a' => ['1'] } },
       { path: ['a', 0], doc: { 'a' => [0, 1, 2] }, val: '1', ex: { 'a' => ['1', 1, 2] } },
-#      { path: ['a', 0, 'a'], doc: { }, val: '1', ex: { 'a' => [{ 'a' => '1' }] } },
+      { path: ['a', 0, 'a'], doc: { }, val: '1', ex: { 'a' => [{ 'a' => '1' }] } },
       { path: ['a', 3], doc: {}, val: '1', ex: { 'a' => [nil, nil, nil, '1'] } },
       { path: ['a', 3], doc: { 'a' => [0, 1, 2, 3, 4]}, val: '1', ex: { 'a' => [0, 1, 2, '1', 4] } },
       { path: [3], doc: {}, val: '1', ex: { 3 => '1' } },
-#      { path: ['3'], doc: [0, 1, 2, 3, 4], val: '1', ex: [0, 1, 2, '1', 4] },
-#      { path: ['a', 'b', 1, 'c'], doc: {}, val: '1', ex: { 'a' => {'b' => [nil, { 'c' => '1' }] } } },
+      { path: [3], doc: [0, 1, 2, 3, 4], val: '1', ex: [0, 1, 2, '1', 4] },
+      { path: ['a', 'b', 1, 'c'], doc: {}, val: '1', ex: { 'a' => {'b' => [nil, { 'c' => '1' }] } } },
     ]
 
     verify_set(expectations)
