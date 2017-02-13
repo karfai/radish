@@ -87,11 +87,9 @@ module Radish
         elsif ev.class == Hash && nv.class == Array
           ev.merge(array_to_hash(nv))
         elsif ev.class == Array && nv.class == Array
-          rv = ev.dup
-          nv.each_with_index do |v, i|
-            rv[i] = v if v
+          ev.zip(nv).map do |both|
+            both.last ? both.last : both.first
           end
-          rv
         else
           nv
         end
