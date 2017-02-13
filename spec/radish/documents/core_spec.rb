@@ -60,6 +60,40 @@ describe Radish::Documents::Core do
     verify_get(expectations)
   end
 
+  def verify_set(expectations)
+    expectations.each do |ex|
+      odoc = ex[:doc].clone
+      ndoc = set(ex[:doc], ex[:path], ex[:val])
+
+      expect(ex[:doc]).to eql(odoc), 'expected documents to not be modified'
+      expect(ndoc).to eql(ex[:ex])
+    end
+  end
+
+  it 'should set paths by array' do
+    expectations = [
+      { path: ['a'], doc: {}, val: '1', ex: { 'a' => '1' } },
+      { path: ['a'], doc: { 'a' => 1 }, val: 11, ex: { 'a' => 11 } },
+      { path: ['a', 'b'], doc: { 'a' => {} }, val: '1', ex: { 'a' => { 'b' => '1' } } },
+      { path: ['a', 'b'], doc: { 'a' => {} }, val: { 'c' => 'ccc' }, ex: { 'a' => { 'b' => { 'c' => 'ccc' } } } },
+      { path: ['a', 'b'], doc: { 'a' => { 'c' => 'ccc' } }, val: '1', ex: { 'a' => { 'b' => '1', 'c' => 'ccc' } } },
+      { path: ['a', 0], doc: { 'a' => {} }, val: '1', ex: { 'a' => { 0 => '1' } } },
+      { path: ['a', '0'], doc: { 'a' => {} }, val: '1', ex: { 'a' => { '0' => '1' } } },
+      { path: ['a', 0], doc: { 'a' => { 'b' => '11' } }, val: '1', ex: { 'a' => { 'b' => '11', 0 => '1' } } },
+      { path: ['a', 0], doc: { }, val: '1', ex: { 'a' => ['1'] } },
+      { path: ['a', '0'], doc: {}, val: '1', ex: { 'a' => ['1'] } },
+      { path: ['a', 0], doc: { 'a' => [0, 1, 2] }, val: '1', ex: { 'a' => ['1', 1, 2] } },
+#      { path: ['a', 0, 'a'], doc: { }, val: '1', ex: { 'a' => [{ 'a' => '1' }] } },
+      { path: ['a', 3], doc: {}, val: '1', ex: { 'a' => [nil, nil, nil, '1'] } },
+      { path: ['a', 3], doc: { 'a' => [0, 1, 2, 3, 4]}, val: '1', ex: { 'a' => [0, 1, 2, '1', 4] } },
+      { path: [3], doc: {}, val: '1', ex: { 3 => '1' } },
+#      { path: ['3'], doc: [0, 1, 2, 3, 4], val: '1', ex: [0, 1, 2, '1', 4] },
+#      { path: ['a', 'b', 1, 'c'], doc: {}, val: '1', ex: { 'a' => {'b' => [nil, { 'c' => '1' }] } } },
+    ]
+
+    verify_set(expectations)
+  end
+
   it 'should get paths by string' do
     expectations = [
       { path: 'a', ex: doc['a'] },
