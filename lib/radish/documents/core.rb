@@ -55,22 +55,25 @@ module Radish
         rv
       end
 
-      def build_from_path(pev, path, val)
-        if path.length > 1
-          k = path.first
-          ev = pev ? pev.fetch(k, nil) : nil
-          nv = build_from_path(ev, path[1..-1], val)
-
-          # TODO: factor/consolidate given :merge_values and :make_new_value_for_set
-          if k.class == Fixnum || /^[0-9]+$/.match(k)
-            rv = []
-            rv[k.to_i] = nv
-            rv
-          else
-            { k => merge_values(ev, nv) }
-          end
+      def merge_into(k, ev, nv, av)
+        if (k.class == Fixnum || /^[0-9]+$/.match(k)) && (!ev || ev.class == Array)
+          rv = av
+          rv[k.to_i] = nv
+          rv
         else
-          make_new_value_for_set(pev, path.first, val)
+          { k => merge_values(ev, nv) }
+        end
+      end
+
+      def build_from_path(pev, path, val)
+        k = path.first
+
+        if path.length > 1
+          ev = pev ? pev.fetch(k, nil) : nil
+
+          merge_into(k, ev, build_from_path(ev, path[1..-1], val), [])
+        else
+          merge_into(k, pev, val, (pev && pev.class == Array) ? pev.dup : [])
         end
       end
 
@@ -92,17 +95,6 @@ module Radish
           end
         else
           nv
-        end
-      end
-
-      def make_new_value_for_set(ev, k, v)
-        if (k.class == Fixnum || /^[0-9]+$/.match(k)) && (!ev || ev.class == Array)
-          ki = k.to_i
-          rv = ev ? ev.dup : []
-          rv[ki] = v
-          rv
-        else
-          { k => v }
         end
       end
     end
