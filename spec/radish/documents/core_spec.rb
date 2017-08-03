@@ -38,10 +38,18 @@ describe Radish::Documents::Core do
     }
   end
 
+  class Hashish < Hash
+  end
+  
   def verify_get(expectations)
     expectations.each do |ex|
       expect(has(doc, ex[:path])).to be_truthy, "expected doc to have #{ex[:path]}"
       ac = get(doc, ex[:path])
+      expect(ac).to eql(ex[:ex]), "expected #{ex[:ex]} for #{ex[:path]}, but got #{ac}"
+
+      # it should also work for Hash derived things
+      h = Hashish.new.merge(doc)
+      ac = get(h, ex[:path])
       expect(ac).to eql(ex[:ex]), "expected #{ex[:ex]} for #{ex[:path]}, but got #{ac}"
     end
   end

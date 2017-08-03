@@ -46,9 +46,9 @@ module Radish
       def has_check(doc, k)
         rv = false
 
-        if doc.class == Array
+        if doc.class <= Array
           rv = k.to_i < doc.length
-        elsif doc.class == Hash
+        elsif doc.class <= Hash
           rv = doc.key?(k)
         end
 
@@ -56,7 +56,7 @@ module Radish
       end
 
       def merge_into(k, ev, nv, av)
-        if (k.class == Fixnum || /^[0-9]+$/.match(k)) && (!ev || ev.class == Array)
+        if (k.class == Fixnum || /^[0-9]+$/.match(k)) && (!ev || ev.class <= Array)
           rv = av
           rv[k.to_i] = nv
           rv
@@ -73,7 +73,7 @@ module Radish
 
           merge_into(k, ev, build_from_path(ev, path[1..-1], val), [])
         else
-          merge_into(k, pev, val, (pev && pev.class == Array) ? pev.dup : [])
+          merge_into(k, pev, val, (pev && pev.class <= Array) ? pev.dup : [])
         end
       end
 
@@ -85,11 +85,11 @@ module Radish
       end
 
       def merge_values(ev, nv)
-        if ev.class == Hash && nv.class == Hash
+        if ev.class <= Hash && nv.class <= Hash
           ev.merge(nv)
-        elsif ev.class == Hash && nv.class == Array
+        elsif ev.class <= Hash && nv.class <= Array
           ev.merge(array_to_hash(nv))
-        elsif ev.class == Array && nv.class == Array
+        elsif ev.class <= Array && nv.class <= Array
           ev.zip(nv).map do |both|
             both.last ? both.last : both.first
           end
