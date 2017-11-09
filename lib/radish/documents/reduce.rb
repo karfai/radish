@@ -14,6 +14,20 @@ module Radish
           end
         end
       end
+
+      def pick(doc, paths=[], path=[])
+        only_hash(doc) do
+          doc.inject({}) do |ndoc, (k, v)|
+            cp = (path + [k]).join('.')
+            included = paths.include?(cp)
+            if included
+              ndoc.merge(k => v)
+            else 
+              v.class == Hash ? ndoc.merge(k => pick(v, paths, path + [k])) : ndoc
+            end
+          end
+        end
+      end
       
       def flatten_broadly(doc, path=[])
         only_hash(doc) do
