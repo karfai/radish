@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    radish (0.0.3)
+    radish (0.1.0)
       multi_json
 
 GEM
