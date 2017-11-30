@@ -1,3 +1,5 @@
+require 'faker'
+
 module Radish
   module Randomness
     def rand_one(a)
@@ -12,8 +14,12 @@ module Radish
       rand(1) > 0 ? rand_one(a) : nil
     end
 
-    def rand_times(i = 10)
+    def rand_seq(i = 10)
       (1 + rand(i)).times
+    end
+
+    def rand_times(i = 10, &bl)
+      rand_seq.each { bl.call if bl }
     end
 
     def rand_partition(a, n)
@@ -22,7 +28,7 @@ module Radish
     end
 
     def rand_array(n = 10)
-      rand_times(n).map { yield }
+      rand_seq(n).map { yield }
     end
 
     def rand_array_of_numbers(n = 10)
@@ -43,6 +49,12 @@ module Radish
 
     def rand_array_of_urls(n = 10)
       rand_array(n) { Faker::Internet.url }
+    end
+
+    def rand_document
+      rand_array_of_words.inject({}) do |o, w|
+        o.merge(w => Faker::HarryPotter.location)
+      end
     end
   end
 end
