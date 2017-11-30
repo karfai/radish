@@ -8,6 +8,8 @@ Gem::Specification.new do |s|
   s.summary     = "Radish"
   s.description = "Library emulating lodash"
 
+  s.add_dependency 'multi_json'
+
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'faker'
   s.add_development_dependency 'fuubar'
